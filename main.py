@@ -67,7 +67,7 @@ def func(message):
         bot.send_message(message.chat.id, text="Задай мне вопрос", reply_markup=markup)
 
     elif(message.text == 'диджей, музычку'):
-        kk = open(r'C:/Users/Snoopy/Desktop/chapaconi/music.mp3', 'rb')
+        kk = open(r'music.mp3', 'rb')
         bot.send_audio(message.chat.id, kk)
         
     else:
