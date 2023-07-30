@@ -1,17 +1,20 @@
 import telebot
-import requests
 from telebot import types
+import requests
+import json
 
 bot = telebot.TeleBot('5927070206:AAHOchiyptmgIDKs_iBJ4CNVg3E9KSviJyw')
+API = 'feb1d485d1fd4aaa2722bac315773ca7'
 
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    tot = types.KeyboardButton('Чё по погодке, капитан')
     hp = types.KeyboardButton('диджей, музычку')
     mn = types.KeyboardButton('photo')
     btn1 = types.KeyboardButton("Я лёша")
     btn2 = types.KeyboardButton("поинтерисоваться хочу")
-    markup.add(btn1, btn2, mn, hp)
+    markup.add(btn1, btn2, mn, hp, tot)
     bot.send_message(message.chat.id, text="Salam, {0.first_name}!".format(message.from_user), reply_markup=markup)
     
 @bot.message_handler(content_types=['text'])
@@ -54,9 +57,20 @@ def func(message):
         bot.send_photo(message.chat.id, photo)
 
     elif(message.text == 'споки'):
-        ph = open('spok.png', 'rb')
+        ph = open('spok2.png', 'rb')
         bot.send_photo(message.chat.id, ph )
 
+    elif(message.text == 'Чё по погодке, капитан'):
+            city = 'Ростов-на-Дону'
+            res = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API}&units=metric')
+            data = json.loads(res.text)
+            temp = data["main"]["temp"]
+            bot.reply_to(message, f'сейчас погода: {temp}°')
+
+            image = 'sunny.png' if temp > 25.0 else 'sun.png'
+            file = open('./' + image, 'rb')
+            bot.send_photo(message.chat.id, file)
+            
     elif(message.text == 'а ну ка давай назад'):
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
         btn1 = types.KeyboardButton("Я лёша")
@@ -69,12 +83,12 @@ def func(message):
     elif(message.text == 'диджей, музычку'):
         kk = open(r'music.mp3', 'rb')
         bot.send_audio(message.chat.id, kk)
-        
     else:
         bot.send_message(message.chat.id, text="ты чё удумал то")
 
 @bot.message_handler(content_types=['photo'])
 def get_user_photo(message):
-    bot.send_message(message.chat.id, 'ну тут лайк не глядя')
+    bot.send_message(message.chat.id, 'чё за красота')
+
 
 bot.polling(none_stop=True)
